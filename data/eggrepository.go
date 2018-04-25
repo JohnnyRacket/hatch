@@ -1,27 +1,29 @@
-package main
+package data
 
-var eggs []Egg
+import "hatchery/models"
+
+var eggs []models.Egg
 var index int = 0
-func StoreEgg(egg Egg){
+func StoreEgg(egg models.Egg){
 	egg.Id = index
 	index++
 
 	for i,item := range eggs{
 		if egg.HatchTime.Before(item.HatchTime){
-			eggs = append(eggs[:i], append([]Egg{egg}, eggs[i:]...)...)
+			eggs = append(eggs[:i], append([]models.Egg{egg}, eggs[i:]...)...)
 			return
 		}
 	}
 	eggs = append(eggs, egg)
 }
 
-func RetrieveEgg(id int) Egg{
+func RetrieveEgg(id int) models.Egg{
 	//do nothing atm
-	var egg Egg
+	var egg models.Egg
 	return egg
 }
 
-func RetrieveEggs() []Egg{
+func RetrieveEggs() []models.Egg{
 	return eggs
 }
 

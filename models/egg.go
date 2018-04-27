@@ -9,4 +9,5 @@ type Egg struct {
 	Message  string `json:"message"`
 	Layed time.Time   `json:"layed"`
 	HatchTime time.Time `json:"hatchTime"`
+	//Poison bool
 }

@@ -3,13 +3,17 @@ package data
 import "hatchery/models"
 
 var eggs []models.Egg
-var index int = 0
-func StoreEgg(egg models.Egg){
+var index = 0
+
+//TODO: add function to fetch into memory
+
+//StoreEgg will put an egg into either memory or db storage depending on how far out it should hatch
+func StoreEgg(egg models.Egg) {
 	egg.Id = index
 	index++
 
-	for i,item := range eggs{
-		if egg.HatchTime.Before(item.HatchTime){
+	for i, item := range eggs {
+		if egg.HatchTime.Before(item.HatchTime) {
 			eggs = append(eggs[:i], append([]models.Egg{egg}, eggs[i:]...)...)
 			return
 		}
@@ -17,20 +21,24 @@ func StoreEgg(egg models.Egg){
 	eggs = append(eggs, egg)
 }
 
-func RetrieveEgg(id int) models.Egg{
+//RetrieveEgg gets an egg by Id
+func RetrieveEgg(id int) models.Egg {
 	//do nothing atm
 	var egg models.Egg
 	return egg
 }
 
-func RetrieveEggs() []models.Egg{
+//RetrieveEggs gets all eggs
+func RetrieveEggs() []models.Egg {
 	return eggs
 }
 
-func RemoveEgg(id int){
+//RemoveEgg removes an egg by Id
+func RemoveEgg(id int) {
 	eggs = eggs[1:]
 }
 
-func RemoveEggs(number int){
+//RemoveEggs removes n eggs from memory
+func RemoveEggs(number int) {
 	eggs = eggs[number:]
 }

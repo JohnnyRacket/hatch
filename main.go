@@ -1,12 +1,12 @@
 package main
 
 import (
+	"hatchery/controllers"
 	"log"
 	"net/http"
-	"github.com/gorilla/mux"
-	"hatchery/controllers"
-)
 
+	"github.com/gorilla/mux"
+)
 
 // our main function
 func main() {
@@ -16,7 +16,7 @@ func main() {
 
 	//create a pool of harvester to harvest plants
 	// for f := 1; f <= 5; f++ {
-    //     go Farmer(f, eggs)
+	//     go Farmer(f, eggs)
 	// }
 	StartFarmers(256)
 

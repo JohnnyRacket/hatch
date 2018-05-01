@@ -6,6 +6,9 @@ var eggs []models.Egg
 var index = 0
 
 //TODO: add function to fetch into memory
+func InitializeRepository() {
+	//fetch initial data, start timer for further fetching etc
+}
 
 //StoreEgg will put an egg into either memory or db storage depending on how far out it should hatch
 func StoreEgg(egg models.Egg) {

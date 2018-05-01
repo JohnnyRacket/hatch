@@ -29,16 +29,16 @@ func CreateEgg(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
-	jitterEggTime(&egg)
+	JitterEggTime(&egg)
 	data.StoreEgg(egg)
 }
 
 //DeleteEgg will delete and egg
 func DeleteEgg(w http.ResponseWriter, r *http.Request) {}
 
-//jitterEggTime jitters the time the egg will hatch across a minute to lower clustering
-func jitterEggTime(egg *models.Egg) {
-	egg.HatchTime.Truncate(time.Minute)                  // make sure egg time starts at 0 seconds
-	rand := rand.Intn(60) - 30                           //get a value between -30 and 30 randomly
-	egg.HatchTime.Add(time.Second * time.Duration(rand)) //jitter the eggs hatch time 30 secnds either way
+//JitterEggTime jitters the time the egg will hatch across a minute to lower clustering
+func JitterEggTime(egg *models.Egg) {
+	egg.HatchTime = egg.HatchTime.Truncate(time.Minute)                  // make sure egg time starts at 0 seconds
+	rand := rand.Intn(60) - 30                                           //get a value between -30 and 30 randomly
+	egg.HatchTime = egg.HatchTime.Add(time.Second * time.Duration(rand)) //jitter the eggs hatch time 30 secnds either way
 }

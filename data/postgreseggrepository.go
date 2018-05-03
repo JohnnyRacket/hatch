@@ -84,7 +84,13 @@ func StoreEgg(egg models.Egg) {
 	// db insert
 	if egg.HatchTime.After(time.Now().Add(time.Minute * 15)) {
 		connect()
-		db.Query(fmt.Sprintf("INSERT INTO eggs VALUES ('%s', '%s', '%s', '%s', '%s', '%s');", egg.Author, egg.Target, egg.Message, egg.Picture, egg.Layed, egg.HatchTime))
+		db.Exec("INSERT INTO eggs (author, target, message, picture, layed, hatchtime) VALUES ($1, $2, $3, $4, $5, $6);",
+			egg.Author,
+			egg.Target,
+			egg.Message,
+			egg.Picture,
+			egg.Layed,
+			egg.HatchTime)
 
 		db.Close()
 	} else {

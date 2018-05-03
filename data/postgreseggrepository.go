@@ -67,7 +67,7 @@ func connect() {
 		if err == nil {
 			break
 		}
-		time.Sleep(1 * time.Second)
+		time.Sleep(5 * time.Second)
 	}
 
 	//db, err = sql.Open("postgres", connStr)

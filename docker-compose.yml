@@ -1,0 +1,10 @@
+version: '3'
+services:
+  server:
+    build: .
+    ports:
+      - "5000:8080"
+  redis:
+    image: "redis:alpine"
+  postgres: 
+    image: "postgres"

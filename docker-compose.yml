@@ -22,11 +22,9 @@ services:
     ports:
       - "5000:8080"
     environment:
-      PGPASSWORD: /run/secrets/postgres_password
+      PGPASSWORD: 
       PGUSER: farmer
       PGDBNAME: coup
-    links:
-      - postgres:db
     depends_on:
       - postgres
     secrets:

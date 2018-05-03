@@ -26,14 +26,14 @@ func InitializeRepository() {
 
 	connect()
 
-	stmt, err := db.Prepare(`CREATE TABLE IF NOT EXISTS $1.eggs (
+	stmt, err := db.Prepare(`CREATE TABLE IF NOT EXISTS eggs (
 		id SERIAL PRIMARY KEY,
 		author character varying(255) NOT NULL,
 		target character varying(255) NOT NULL,
 		message character varying(255),
 		picture text,
 		layed timestamp with time zone NOT NULL,
-		hatchtime timestamp with time zone NOT NULL,
+		hatchtime timestamp with time zone NOT NULL
 		)`)
 
 	if err != nil {
@@ -41,7 +41,7 @@ func InitializeRepository() {
 		fmt.Print("I broke")
 	}
 
-	_, execErr := stmt.Exec(dbname)
+	_, execErr := stmt.Exec()
 
 	if execErr != nil {
 		log.Fatal(execErr)
@@ -54,7 +54,7 @@ func InitializeRepository() {
 }
 
 func connect() {
-	connStr := "user=" + user + " password=" + pw + " dbname=" + dbname + " host=db sslmode=disable"
+	connStr := "user=" + user + " password=" + pw + " dbname=" + dbname + " host=postgres sslmode=disable"
 	var err error
 	for i := 0; i < 10; i++ {
 		db, err = sql.Open("postgres", connStr)
@@ -78,7 +78,7 @@ func StoreEgg(egg models.Egg) {
 	// db insert
 	if egg.HatchTime.After(time.Now().Add(time.Minute * 15)) {
 		connect()
-		db.Query(fmt.Sprintf("INSERT INTO eggs VALUES (%s, %s, %s, %s, %s, %s);", egg.Author, egg.Target, egg.Message, egg.Picture, egg.Layed, egg.HatchTime))
+		db.Query(fmt.Sprintf("INSERT INTO eggs VALUES ('%s', '%s', '%s', '%s', '%s', '%s');", egg.Author, egg.Target, egg.Message, egg.Picture, egg.Layed, egg.HatchTime))
 
 		db.Close()
 	} else {

@@ -33,6 +33,9 @@ func RetrieveEgg(id int) models.Egg {
 
 //RetrieveEggs gets all eggs
 func RetrieveEggs() []models.Egg {
+	if eggs == nil {
+		return []models.Egg{}
+	}
 	return eggs
 }
 

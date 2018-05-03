@@ -2,20 +2,30 @@ version: '3.3'
 secrets:
   postgres_password:
       file: ./secrets/postgres_password
+  pgadmin_password:
+      file: ./secrets/pgadmin_password
 services:
+  redis:
+    image: "redis:alpine"
+  postgres: 
+    image: "postgres"
+    environment:
+      POSTGRES_DB: coup
+      POSTGRES_USER: farmer
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+    ports:
+      - "5432:5432"
+    secrets:
+      - postgres_password
   server:
     build: .
     ports:
       - "5000:8080"
     environment:
       PGPASSWORD: /run/secrets/postgres_password
-    secrets:
-      - postgres_password
-  redis:
-    image: "redis:alpine"
-  postgres: 
-    image: "postgres"
-    environment:
-      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      PGUSER: farmer
+      PGDBNAME: coup
+    depends_on:
+      - postgres
     secrets:
       - postgres_password

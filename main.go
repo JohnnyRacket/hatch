@@ -1,6 +1,7 @@
 package main
 
 import (
+	"hatchery/data"
 	"hatchery/engine"
 	"hatchery/routing"
 	"log"
@@ -13,6 +14,7 @@ import (
 func main() {
 
 	//starts the function that will evaluate when to alert users
+	data.InitializeRepository()
 	engine.NewIncubator()
 	//creates a new router
 	router := mux.NewRouter()

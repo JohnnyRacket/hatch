@@ -9,4 +9,4 @@ To rebuild the app, run `docker-compose up --build`
 
 ## Managing Secrets
 
-In the root of the app, add a `secrets` directory with a `postgres_password` and a `pgadmin_password` document (no extension). Enter the password with no whitespaces around it. ** NEVER COMMIT THIS JOHN **
+In the root of the app, add a `secrets` directory with a `postgres_password` document (no extension). Enter the password with no whitespaces around it. 

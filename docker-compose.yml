@@ -16,7 +16,7 @@ services:
     secrets:
       - postgres_password
   server:
-    build: .
+    build: ./hatchery-service
     ports:
       - "5000:8080"
     environment:

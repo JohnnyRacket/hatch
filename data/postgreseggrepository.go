@@ -21,11 +21,10 @@ var pw, dbname, user string
 //TODO: add function to fetch into memory
 func InitializeRepository() {
 	//fetch initial data, start timer for further fetching etc
-	dat, err := ioutil.ReadFile("/run/secrets/postgres_password")
+	dat, err := ioutil.ReadFile(os.Getenv("PGPW_LOCATION"))
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println(string(dat))
 
 	pw = string(dat)
 	dbname = os.Getenv("PGDBNAME")

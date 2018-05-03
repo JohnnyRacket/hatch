@@ -22,6 +22,7 @@ services:
     environment:
       PGUSER: farmer
       PGDBNAME: coup
+      PGPW_LOCATION: /run/secrets/postgres_password
     depends_on:
       - postgres
     secrets:

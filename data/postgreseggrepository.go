@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"hatchery/models"
+	"io/ioutil"
 	"log"
 	"os"
 	"time"
@@ -20,7 +21,13 @@ var pw, dbname, user string
 //TODO: add function to fetch into memory
 func InitializeRepository() {
 	//fetch initial data, start timer for further fetching etc
-	pw = os.Getenv("PGPASSWORD")
+	dat, err := ioutil.ReadFile("/run/secrets/postgres_password")
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(string(dat))
+
+	pw = string(dat)
 	dbname = os.Getenv("PGDBNAME")
 	user = os.Getenv("PGUSER")
 

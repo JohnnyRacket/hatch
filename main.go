@@ -18,5 +18,5 @@ func main() {
 	router := mux.NewRouter()
 	//set the routes
 	routing.InitializeRoutes(router)
-	log.Fatal(http.ListenAndServe(":8000", router))
+	log.Fatal(http.ListenAndServe(":8080", router))
 }

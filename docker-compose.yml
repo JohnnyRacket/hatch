@@ -25,6 +25,8 @@ services:
       PGPASSWORD: /run/secrets/postgres_password
       PGUSER: farmer
       PGDBNAME: coup
+    links:
+      - postgres:db
     depends_on:
       - postgres
     secrets:

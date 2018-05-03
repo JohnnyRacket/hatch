@@ -54,9 +54,17 @@ func InitializeRepository() {
 }
 
 func connect() {
-	connStr := "user=" + user + " password=" + pw + " dbname=" + dbname + " sslmode=verify-full"
+	connStr := "user=" + user + " password=" + pw + " dbname=" + dbname + " host=db sslmode=disable"
 	var err error
-	db, err = sql.Open("postgres", connStr)
+	for i := 0; i < 10; i++ {
+		db, err = sql.Open("postgres", connStr)
+		if err == nil {
+			break
+		}
+		time.Sleep(1 * time.Second)
+	}
+
+	//db, err = sql.Open("postgres", connStr)
 	if err != nil {
 		log.Fatal(err)
 	}

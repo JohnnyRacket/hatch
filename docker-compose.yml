@@ -15,7 +15,7 @@ services:
       - "5432:5432"
     secrets:
       - postgres_password
-  server:
+  hatchery:
     build: ./hatchery-service
     ports:
       - "5000:8080"
@@ -27,3 +27,18 @@ services:
       - postgres
     secrets:
       - postgres_password
+  app:
+    build: ./app-service
+    ports:
+      - "5100:8080"
+    volumes:
+      - "./hatch-react-app:/go/src/app-service/hatch"
+  react-app:
+    build:
+      context: ./hatch-react-app
+      dockerfile: Dockerfile
+    volumes:
+      - './hatch-react-app:/usr/src/app'
+      - './hatch-react-app/node_modules:/usr/src/app/node_modules'
+    environment:
+      - CHOKIDAR_USEPOLLING=true

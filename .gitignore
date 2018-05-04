@@ -12,3 +12,5 @@
 *.out
 
 secrets/
+
+_tools/

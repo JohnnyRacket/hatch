@@ -1,9 +1,15 @@
 package main
 
 import (
-	"fmt"
+	"net/http"
+
+	"hatch/rpc/user"
+	"hatch/user-service/controllers"
 )
 
 func main() {
-	fmt.Println("hello world")
+	server := &controllers.Server{} // implements Haberdasher interface
+	twirpHandler := user.NewUserServiceServer(server, nil)
+
+	http.ListenAndServe(":8080", twirpHandler)
 }

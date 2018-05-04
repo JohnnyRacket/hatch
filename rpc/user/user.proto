@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package hatch.rpc;
+option go_package = "user";
+
+// UserService handles user.
+service UserService {
+    // GetUser returns a single user via its id
+    rpc GetUser(UserId) returns (User);
+}
+
+// User is a user of hatch
+message User {
+    int32 id = 1; // must be > 0
+    string email = 2;
+    string name = 3;
+}
+
+// UserId is the Id by which users are stored
+message UserId {
+    int32 id = 1;
+}

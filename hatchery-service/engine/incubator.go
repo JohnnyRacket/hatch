@@ -2,8 +2,8 @@ package engine
 
 import (
 	"fmt"
-	"hatchery/data"
-	"hatchery/models"
+	"hatch/hatchery-service/data"
+	"hatch/hatchery-service/models"
 	"time"
 )
 

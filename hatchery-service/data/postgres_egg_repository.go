@@ -3,7 +3,7 @@ package data
 import (
 	"database/sql"
 	"fmt"
-	"hatchery/models"
+	"hatch/hatchery-service/models"
 	"io/ioutil"
 	"log"
 	"os"
@@ -16,7 +16,7 @@ import (
 var eggs []models.Egg
 var index = 0
 var db *sql.DB
-var pw, dbname, user string
+var pw, dbname, host, user string
 
 //TODO: add function to fetch into memory
 func InitializeRepository() {
@@ -29,6 +29,7 @@ func InitializeRepository() {
 	pw = string(dat)
 	dbname = os.Getenv("PGDBNAME")
 	user = os.Getenv("PGUSER")
+	host = os.Getenv("PGHOST")
 
 	connect()
 
@@ -60,7 +61,7 @@ func InitializeRepository() {
 }
 
 func connect() {
-	connStr := "user=" + user + " password=" + pw + " dbname=" + dbname + " host=postgres sslmode=disable"
+	connStr := "user=" + user + " password=" + pw + " dbname=" + dbname + " host=" + host + " sslmode=disable"
 	var err error
 	for i := 0; i < 10; i++ {
 		db, err = sql.Open("postgres", connStr)

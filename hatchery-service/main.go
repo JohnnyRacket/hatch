@@ -1,9 +1,9 @@
 package main
 
 import (
-	"hatchery/data"
-	"hatchery/engine"
-	"hatchery/routing"
+	"hatch/hatchery-service/data"
+	"hatch/hatchery-service/engine"
+	"hatch/hatchery-service/routing"
 	"log"
 	"net/http"
 

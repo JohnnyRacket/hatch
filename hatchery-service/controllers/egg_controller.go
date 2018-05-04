@@ -2,12 +2,11 @@ package controllers
 
 import (
 	"encoding/json"
+	"hatch/hatchery-service/data"
+	"hatch/hatchery-service/models"
 	"math/rand"
 	"net/http"
 	"time"
-
-	"hatchery/data"
-	"hatchery/models"
 )
 
 //TODO:  add wait groups to make it work async

@@ -1,7 +1,7 @@
 package routing
 
 import (
-	"hatchery/controllers"
+	"hatch/hatchery-service/controllers"
 
 	"github.com/gorilla/mux"
 )

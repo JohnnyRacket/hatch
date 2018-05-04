@@ -1,8 +1,8 @@
 package controllers_test
 
 import (
-	"hatchery/controllers"
-	"hatchery/models"
+	"hatch/hatchery-service/controllers"
+	"hatch/hatchery-service/models"
 	"testing"
 	"time"
 )

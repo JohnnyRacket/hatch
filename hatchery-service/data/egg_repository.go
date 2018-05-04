@@ -1,7 +1,7 @@
 package data
 
 import (
-	"hatchery/models"
+	"hatch/hatchery-service/models"
 )
 
 //EggRepository is the interface for access eggs from whatever data layer.

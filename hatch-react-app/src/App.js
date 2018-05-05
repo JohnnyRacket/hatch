@@ -11,8 +11,9 @@ class App extends Component {
           <h1 className="App-title">Welcome to React Boyo</h1>
         </header>
         <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
+          To log out, click here:
         </p>
+        <a href="/logout">Log Out</a>
       </div>
     );
   }

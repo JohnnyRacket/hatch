@@ -2,20 +2,35 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/gorilla/mux"
+
+	"hatch/app-service/controllers"
+	"hatch/app-service/middleware"
+	"hatch/app-service/session-manager"
 )
 
 func main() {
-	fmt.Println("Hello from app-service~ 📱")
 	// Create new router instance
 	r := mux.NewRouter()
-	r.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir("hatch/build"))))
+	authKey, authKeyErr := ioutil.ReadFile(os.Getenv("SESSION_AUTH_LOCATION"))
+	cryptKey, cryptKeyErr := ioutil.ReadFile(os.Getenv("SESSION_CRYPT_LOCATION"))
 
-	// TODO: handle non-html routes here
+	if authKeyErr != nil || cryptKeyErr != nil {
+		log.Fatal("Could not read keys for session")
+	}
 
-	log.Println("Listening at port 8080")
-	http.ListenAndServe(":8080", r)
+	sessionManager := sessionmanager.NewSessionManager(authKey, cryptKey)
+	middlewareManager := middleware.NewManager(sessionManager)
+	var authenticationController controllers.Controller = controllers.NewAuthenticationController(sessionManager)
+
+	authenticationController.RegisterRoutes(r)
+	r.PathPrefix("/").Handler(middlewareManager.ValidateAuthenticationForHandler(http.StripPrefix("/", http.FileServer(http.Dir("hatch/build")))))
+
+	log.Println(fmt.Sprintf("App Service listening at port %s", os.Getenv("PUBLIC_PORT")))
+	log.Fatal(http.ListenAndServe(":8080", r))
 }

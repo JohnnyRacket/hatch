@@ -2,6 +2,10 @@ version: '3.3'
 secrets:
   postgres_password:
       file: ./secrets/postgres_password
+  session_authentication_key:
+      file: ./secrets/session_authentication_key
+  session_encryption_key:
+      file: ./secrets/session_encryption_key
 services:
   redis:
     image: "redis:alpine"
@@ -55,10 +59,17 @@ services:
       - postgres_password
   app:
     build: ./app-service
+    environment:
+      PUBLIC_PORT: 5100
+      SESSION_AUTH_LOCATION: /run/secrets/session_authentication_key
+      SESSION_CRYPT_LOCATION: /run/secrets/session_encryption_key
     ports:
       - "5100:8080"
     volumes:
-      - "./hatch-react-app:/go/src/app-service/hatch"
+      - "./hatch-react-app:/go/src/hatch/app-service/hatch"
+    secrets:
+      - session_authentication_key
+      - session_encryption_key
   react-app:
     build:
       context: ./hatch-react-app

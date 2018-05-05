@@ -24,7 +24,7 @@ func main() {
 		log.Fatal("Could not read keys for session")
 	}
 
-	sessionManager := sessionmanager.NewSessionManager(authKey, cryptKey)
+	sessionManager := session.NewManager(authKey, cryptKey)
 	middlewareManager := middleware.NewManager(sessionManager)
 	var authenticationController controllers.Controller = controllers.NewAuthenticationController(sessionManager)
 

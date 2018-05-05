@@ -1,4 +1,4 @@
-package sessionmanager
+package session
 
 import (
 	"net/http"
@@ -6,24 +6,24 @@ import (
 	"github.com/gorilla/sessions"
 )
 
-// SessionManager type holds a session store
-type SessionManager struct {
-	sessionID     string
-	UserCookieKey string
-	store         *sessions.CookieStore
+// Manager type holds a session store
+type Manager struct {
+	cookieName string
+	UserKey    string
+	store      *sessions.CookieStore
 }
 
-// NewSessionManager creates a new session store
-func NewSessionManager(authenticationKey []byte, encryptionkey []byte) *SessionManager {
-	return &SessionManager{
-		sessionID:     "user-identity",
-		UserCookieKey: "cookie-id",
-		store:         sessions.NewCookieStore(authenticationKey, encryptionkey)}
+// NewManager creates a new session store
+func NewManager(authenticationKey []byte, encryptionkey []byte) *Manager {
+	return &Manager{
+		cookieName: "user-identity",
+		UserKey:    "user-values-id",
+		store:      sessions.NewCookieStore(authenticationKey, encryptionkey)}
 }
 
 // FetchUserIdentityCookieFromRequest (request) returns cookie by name
-func (s *SessionManager) FetchUserIdentityCookieFromRequest(r *http.Request) (*sessions.Session, error) {
-	session, err := s.store.Get(r, s.sessionID)
+func (s *Manager) FetchUserIdentityCookieFromRequest(r *http.Request) (*sessions.Session, error) {
+	session, err := s.store.Get(r, s.cookieName)
 
 	return session, err
 }

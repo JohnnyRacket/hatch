@@ -8,11 +8,11 @@ import (
 
 // Manager holds the session and provides middleware functions
 type Manager struct {
-	sessionmanager *sessionmanager.SessionManager
+	sessionmanager *session.Manager
 }
 
 // NewManager creates a new manager instance with a sessionmanager internally
-func NewManager(sessionmanager *sessionmanager.SessionManager) *Manager {
+func NewManager(sessionmanager *session.Manager) *Manager {
 	return &Manager{sessionmanager: sessionmanager}
 }
 
@@ -26,7 +26,7 @@ func (m *Manager) ValidateAuthentication(f http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
-		cookieID, ok := cookie.Values[m.sessionmanager.UserCookieKey].(string)
+		cookieID, ok := cookie.Values[m.sessionmanager.UserKey].(string)
 		if !ok || cookieID == "" {
 			fmt.Println("no cookie found, sad cookie monster")
 			http.Redirect(w, r, "/login", http.StatusSeeOther)

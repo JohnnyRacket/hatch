@@ -13,11 +13,11 @@ import (
 // AuthenticationController type that holds a sessionmanager
 type AuthenticationController struct {
 	middleware     *middleware.Manager
-	sessionManager *sessionmanager.SessionManager
+	sessionManager *session.Manager
 }
 
 // NewAuthenticationController returns new instance of authentication controller.
-func NewAuthenticationController(sessionManager *sessionmanager.SessionManager) *AuthenticationController {
+func NewAuthenticationController(sessionManager *session.Manager) *AuthenticationController {
 	return &AuthenticationController{middleware: middleware.NewManager(sessionManager), sessionManager: sessionManager}
 }
 
@@ -37,7 +37,7 @@ func (a *AuthenticationController) secretroute(w http.ResponseWriter, r *http.Re
 		http.Error(w, "Could not retrieve session", http.StatusInternalServerError)
 	}
 
-	fmt.Fprintln(w, fmt.Sprintf("your super secret secret is %s", session.Values[a.sessionManager.UserCookieKey]))
+	fmt.Fprintln(w, fmt.Sprintf("your super secret secret is %s", session.Values[a.sessionManager.UserKey]))
 }
 
 func (a *AuthenticationController) renderlogin(w http.ResponseWriter, r *http.Request) {
@@ -63,16 +63,16 @@ func (a *AuthenticationController) authenticate(w http.ResponseWriter, r *http.R
 	// TODO: trade code with auth server for user access token
 	token := uuid.New().String()
 
-	session, err := a.sessionManager.FetchUserIdentityCookieFromRequest(r)
+	cookie, err := a.sessionManager.FetchUserIdentityCookieFromRequest(r)
 	if err != nil {
 		fmt.Print(err)
 		http.Error(w, "Could not retrieve session", http.StatusInternalServerError)
 		return
 	}
 
-	session.Values[a.sessionManager.UserCookieKey] = token
+	cookie.Values[a.sessionManager.UserKey] = token
 
-	session.Save(r, w)
+	cookie.Save(r, w)
 
 	// Redirect to app which will now be securely authenticated
 	http.Redirect(w, r, "/", http.StatusSeeOther)
@@ -94,7 +94,7 @@ func handleLogout(a *AuthenticationController, w http.ResponseWriter, r *http.Re
 		return false
 	}
 
-	session.Values[a.sessionManager.UserCookieKey] = ""
+	session.Values[a.sessionManager.UserKey] = ""
 
 	session.Save(r, w)
 	return true

@@ -13,27 +13,32 @@ import (
 	_ "github.com/lib/pq"
 )
 
-var eggs []models.Egg
-var index = 0
-var db *sql.DB
-var pw, dbname, host, user string
+//PostgresEggRepository is the repo that adapts the app to the db
+type PostgresEggRepository struct {
+	eggs                   []models.Egg
+	index                  int
+	db                     *sql.DB
+	pw, dbname, host, user string
+}
 
 //TODO: add function to fetch into memory
-func InitializeRepository() {
+//NewPostgresRepository returnd a new postgres repository
+func NewPostgresRepository() PostgresEggRepository {
 	//fetch initial data, start timer for further fetching etc
+	r := new(PostgresEggRepository)
 	dat, err := ioutil.ReadFile(os.Getenv("PGPW_LOCATION"))
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	pw = string(dat)
-	dbname = os.Getenv("PGDBNAME")
-	user = os.Getenv("PGUSER")
-	host = os.Getenv("PGHOST")
+	r.pw = string(dat)
+	r.dbname = os.Getenv("PGDBNAME")
+	r.user = os.Getenv("PGUSER")
+	r.host = os.Getenv("PGHOST")
 
-	connect()
+	r.connect()
 
-	stmt, err := db.Prepare(`CREATE TABLE IF NOT EXISTS eggs (
+	stmt, err := r.db.Prepare(`CREATE TABLE IF NOT EXISTS eggs (
 		id SERIAL PRIMARY KEY,
 		author character varying(255) NOT NULL,
 		target character varying(255) NOT NULL,
@@ -57,14 +62,16 @@ func InitializeRepository() {
 
 	fmt.Print("We made the table!")
 
-	db.Close()
+	r.db.Close() //should be deferred and up by the open
+
+	return *r
 }
 
-func connect() {
-	connStr := "user=" + user + " password=" + pw + " dbname=" + dbname + " host=" + host + " sslmode=disable"
+func (r *PostgresEggRepository) connect() {
+	connStr := "user=" + r.user + " password=" + r.pw + " dbname=" + r.dbname + " host=" + r.host + " sslmode=disable"
 	var err error
 	for i := 0; i < 10; i++ {
-		db, err = sql.Open("postgres", connStr)
+		r.db, err = sql.Open("postgres", connStr)
 		if err == nil {
 			break
 		}
@@ -78,14 +85,14 @@ func connect() {
 }
 
 //StoreEgg will put an egg into either memory or db storage depending on how far out it should hatch
-func StoreEgg(egg models.Egg) {
+func (r *PostgresEggRepository) StoreEgg(egg models.Egg) {
 
-	egg.Id = index
-	index++
+	egg.Id = r.index
+	r.index++
 	// db insert
 	if egg.HatchTime.After(time.Now().Add(time.Minute * 15)) {
-		connect()
-		db.Exec("INSERT INTO eggs (author, target, message, picture, layed, hatchtime) VALUES ($1, $2, $3, $4, $5, $6);",
+		r.connect()
+		r.db.Exec("INSERT INTO eggs (author, target, message, picture, layed, hatchtime) VALUES ($1, $2, $3, $4, $5, $6);",
 			egg.Author,
 			egg.Target,
 			egg.Message,
@@ -93,40 +100,40 @@ func StoreEgg(egg models.Egg) {
 			egg.Layed,
 			egg.HatchTime)
 
-		db.Close()
+		r.db.Close()
 	} else {
 		// in memory insert
-		for i, item := range eggs {
+		for i, item := range r.eggs {
 			if egg.HatchTime.Before(item.HatchTime) {
-				eggs = append(eggs[:i], append([]models.Egg{egg}, eggs[i:]...)...)
+				r.eggs = append(r.eggs[:i], append([]models.Egg{egg}, r.eggs[i:]...)...)
 				return
 			}
 		}
-		eggs = append(eggs, egg)
+		r.eggs = append(r.eggs, egg)
 	}
 }
 
 //RetrieveEgg gets an egg by Id
-func RetrieveEgg(id int) models.Egg {
+func (r *PostgresEggRepository) RetrieveEgg(id int) models.Egg {
 	//do nothing atm
 	var egg models.Egg
 	return egg
 }
 
 //RetrieveEggs gets all eggs
-func RetrieveEggs() []models.Egg {
-	if eggs == nil {
+func (r *PostgresEggRepository) RetrieveEggs() []models.Egg {
+	if r.eggs == nil {
 		return []models.Egg{}
 	}
-	return eggs
+	return r.eggs
 }
 
 //RemoveEgg removes an egg by Id
-func RemoveEgg(id int) {
-	eggs = eggs[1:]
+func (r *PostgresEggRepository) RemoveEgg(id int) {
+	r.eggs = r.eggs[1:]
 }
 
 //RemoveEggs removes n eggs from memory
-func RemoveEggs(number int) {
-	eggs = eggs[number:]
+func (r *PostgresEggRepository) RemoveEggs(number int) {
+	r.eggs = r.eggs[number:]
 }

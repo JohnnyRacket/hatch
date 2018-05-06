@@ -11,23 +11,25 @@ const AsyncNotFound = asyncComponent(() => import("./generic/NotFound.component"
 class App extends Component {
   render() {
     return (
-      <main className="App">
+      <main className="App has-background-primary">
         <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React Boyo</h1>
+          <h1 className="App-title">Welcome to Hatch</h1>
         </header>
-        <section>
+        <section className="section">
           <Switch>
             <Route path="/" exact component={AsyncHome} />
             <Route component={AsyncNotFound} />  
           </Switch>
         </section>
-        <footer>
-          <p className="App-intro">
-            To log out, click here:
-          </p>
-          <a href="/logout">Log Out</a>
-        </footer>    
+        <footer className="footer">
+          <div className="container">
+            <div className="content has-text-centered">
+              <p className="App-intro">
+                To log out, click here: <a href="/logout">Log Out</a>
+              </p>
+            </div>
+          </div>
+        </footer>
         </main>
     );
   }

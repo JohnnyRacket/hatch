@@ -9,6 +9,6 @@ import (
 type UserRepository interface {
 	GetUser(id uuid.UUID) (models.User, error)
 	GetUsers() ([]models.User, error)
-	AddUser(email string, name string)
-	RemoveUser(id uuid.UUID)
+	AddUser(email string, name string) (uuid.UUID, error)
+	RemoveUser(id uuid.UUID) error
 }

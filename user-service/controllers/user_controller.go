@@ -3,6 +3,7 @@ package controllers
 import (
 	"context"
 	pb "hatch/rpc/user"
+	"hatch/user-service/data"
 	"math/rand"
 	"strconv"
 
@@ -11,9 +12,16 @@ import (
 	"github.com/twitchtv/twirp"
 )
 
-type Server struct{}
+type UserServiceServer struct {
+	userRepo      data.UserRepository
+	emailCodeRepo data.EmailRepository
+}
 
-func (s *Server) GetUser(ctx context.Context, userId *pb.UserId) (user *pb.User, err error) {
+func NewUserServiceServer(userRepo data.UserRepository, emailCodeRepo data.EmailRepository) UserServiceServer {
+	return UserServiceServer{userRepo: userRepo, emailCodeRepo: emailCodeRepo}
+}
+
+func (s *UserServiceServer) GetUser(ctx context.Context, userId *pb.UserId) (user *pb.User, err error) {
 	if userId.Id <= 0 {
 		return nil, twirp.InvalidArgumentError(strconv.Itoa(int(userId.Id)), "ID out of range")
 	}
@@ -26,7 +34,7 @@ func (s *Server) GetUser(ctx context.Context, userId *pb.UserId) (user *pb.User,
 }
 
 //Register user puts a user into the system and will go to create an email code
-func (s *Server) RegisterUser(ctx context.Context, user *pb.NewUser) (status *pb.Status, err error) {
+func (s *UserServiceServer) RegisterUser(ctx context.Context, user *pb.NewUser) (status *pb.Status, err error) {
 	if user.Email == "" || user.Name == "" {
 		return nil, twirp.InvalidArgumentError("", "Email and User must be valid")
 	}
@@ -34,12 +42,11 @@ func (s *Server) RegisterUser(ctx context.Context, user *pb.NewUser) (status *pb
 	return &pb.Status{Status: "success"}, nil
 }
 
-func (s *Server) createMagicEmailCode(email string) (err error) {
+func (s *UserServiceServer) createMagicEmailCode(email string) (code string) {
 	uuid := uuid.New()
-	uuid.String()
-	return nil
+	return uuid.String()
 }
 
-func (s *Server) checkUserExists(email string) (res bool, err error) {
+func (s *UserServiceServer) checkUserExists(email string) (res bool, err error) {
 	return false, nil
 }

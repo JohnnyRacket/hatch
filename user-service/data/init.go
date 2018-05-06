@@ -9,7 +9,8 @@ import (
 	"time"
 )
 
-func init() {
+//Init creates the db context and returns it, also ensures tables are set up
+func Init() (*sql.DB, error) {
 	dat, err := ioutil.ReadFile(os.Getenv("PGPW_LOCATION"))
 	if err != nil {
 		fmt.Println(err)
@@ -22,10 +23,11 @@ func init() {
 	db := new(sql.DB)
 
 	connect(user, pw, dbname, host, db)
-	defer db.Close()
 
 	prepareUserDB(db)
 	prepareEmailCodeDB(db)
+
+	return db, nil
 
 }
 

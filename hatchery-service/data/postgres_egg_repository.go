@@ -2,11 +2,7 @@ package data
 
 import (
 	"database/sql"
-	"fmt"
 	"hatch/hatchery-service/models"
-	"io/ioutil"
-	"log"
-	"os"
 	"time"
 
 	// fallback for the sql package
@@ -15,84 +11,27 @@ import (
 
 //PostgresEggRepository is the repo that adapts the app to the db
 type PostgresEggRepository struct {
-	eggs                   []models.Egg
-	index                  int
-	db                     *sql.DB
-	pw, dbname, host, user string
+	eggs  []models.Egg
+	index int
+	db    *sql.DB
 }
 
 //TODO: add function to fetch into memory
+
 //NewPostgresRepository returnd a new postgres repository
-func NewPostgresRepository() PostgresEggRepository {
+func NewPostgresRepository(db *sql.DB) PostgresEggRepository {
 	//fetch initial data, start timer for further fetching etc
-	r := new(PostgresEggRepository)
-	dat, err := ioutil.ReadFile(os.Getenv("PGPW_LOCATION"))
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	r.pw = string(dat)
-	r.dbname = os.Getenv("PGDBNAME")
-	r.user = os.Getenv("PGUSER")
-	r.host = os.Getenv("PGHOST")
-
-	r.connect()
-
-	stmt, err := r.db.Prepare(`CREATE TABLE IF NOT EXISTS eggs (
-		id SERIAL PRIMARY KEY,
-		author character varying(255) NOT NULL,
-		target character varying(255) NOT NULL,
-		message character varying(255),
-		picture text,
-		layed timestamp with time zone NOT NULL,
-		hatchtime timestamp with time zone NOT NULL
-		)`)
-
-	if err != nil {
-		log.Fatal(err)
-		fmt.Print("I broke")
-	}
-
-	_, execErr := stmt.Exec()
-
-	if execErr != nil {
-		log.Fatal(execErr)
-		fmt.Print("I broke")
-	}
-
-	fmt.Print("We made the table!")
-
-	r.db.Close() //should be deferred and up by the open
-
-	return *r
-}
-
-func (r *PostgresEggRepository) connect() {
-	connStr := "user=" + r.user + " password=" + r.pw + " dbname=" + r.dbname + " host=" + r.host + " sslmode=disable"
-	var err error
-	for i := 0; i < 10; i++ {
-		r.db, err = sql.Open("postgres", connStr)
-		if err == nil {
-			break
-		}
-		time.Sleep(5 * time.Second)
-	}
-
-	//db, err = sql.Open("postgres", connStr)
-	if err != nil {
-		log.Fatal(err)
-	}
+	return PostgresEggRepository{db: db}
 }
 
 //StoreEgg will put an egg into either memory or db storage depending on how far out it should hatch
-func (r *PostgresEggRepository) StoreEgg(egg models.Egg) {
+func (r *PostgresEggRepository) StoreEgg(egg models.Egg) error {
 
 	egg.Id = r.index
 	r.index++
 	// db insert
 	if egg.HatchTime.After(time.Now().Add(time.Minute * 15)) {
-		r.connect()
-		r.db.Exec("INSERT INTO eggs (author, target, message, picture, layed, hatchtime) VALUES ($1, $2, $3, $4, $5, $6);",
+		_, err := r.db.Exec("INSERT INTO eggs (author, target, message, picture, layed, hatchtime) VALUES ($1, $2, $3, $4, $5, $6);",
 			egg.Author,
 			egg.Target,
 			egg.Message,
@@ -100,17 +39,21 @@ func (r *PostgresEggRepository) StoreEgg(egg models.Egg) {
 			egg.Layed,
 			egg.HatchTime)
 
-		r.db.Close()
+		if err != nil {
+			return err
+		}
 	} else {
 		// in memory insert
 		for i, item := range r.eggs {
 			if egg.HatchTime.Before(item.HatchTime) {
 				r.eggs = append(r.eggs[:i], append([]models.Egg{egg}, r.eggs[i:]...)...)
-				return
+				return nil
 			}
 		}
 		r.eggs = append(r.eggs, egg)
 	}
+
+	return nil
 }
 
 //RetrieveEgg gets an egg by Id

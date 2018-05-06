@@ -16,8 +16,10 @@ func main() {
 
 	//creates a new router
 	router := mux.NewRouter()
+	//init db
+	db, err := data.Init()
 	//initialize repositories
-	eggRepository := data.NewPostgresRepository()
+	eggRepository := data.NewPostgresRepository(db)
 	//have controllers register their routes
 	eggController := controllers.NewEggController(&eggRepository)
 	eggController.RegisterRoutes(router)

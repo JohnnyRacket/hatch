@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 
 	"hatch/app-service/controllers"
@@ -44,5 +45,5 @@ func main() {
 	})
 
 	log.Println(fmt.Sprintf("App Service listening at port %s", os.Getenv("PUBLIC_PORT")))
-	log.Fatal(http.ListenAndServe(":8080", r))
+	log.Fatal(http.ListenAndServe(":8080", handlers.CompressHandler(r)))
 }

@@ -13,7 +13,6 @@ class App extends Component {
     return (
       <main className="App has-background-primary">
         <header className="App-header">
-          <h1 className="App-title">Welcome to Hatch</h1>
         </header>
         <section className="section">
           <Switch>

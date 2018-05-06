@@ -1,30 +1,33 @@
 import React, { Component } from 'react'
+import { Link } from 'react-router-dom'
 
 class Home extends Component {
     render() {
         return (
-            <div class="card">
-                <div class="card-content">
-                    <p class="title">
-                    “There are two hard things in computer science: cache invalidation, naming things, and off-by-one errors.”
-                    </p>
-                    <p class="subtitle">
-                    Jeff Atwood
-                    </p>
+            <article className="container">
+                <div className="columns">
+                    <div className="column is-half is-offset-one-quarter">
+                        <div className="card">
+                            <div className="card-content">
+                                <h1 className="title is-2">Welcome to Hatch! 🥚</h1>
+                                <h3 className="subtitle is-4">How did you get here?</h3>
+                            </div>
+                            <footer className="card-footer">
+                                <p className="card-footer-item">
+                                    <Link to="/login">
+                                        Login
+                                    </Link>
+                                </p>
+                                <p className="card-footer-item">
+                                    <Link to="/register">
+                                        Register
+                                    </Link>
+                                </p>
+                            </footer>
+                        </div>
+                    </div>
                 </div>
-                <footer class="card-footer">
-                    <p class="card-footer-item">
-                    <span>
-                        View on <a href="https://twitter.com/codinghorror/status/506010907021828096">Twitter</a>
-                    </span>
-                    </p>
-                    <p class="card-footer-item">
-                    <span>
-                        Share on <a href="#">Facebook</a>
-                    </span>
-                    </p>
-                </footer>
-                </div>
+            </article>
         )
     }
 }

@@ -24,6 +24,7 @@ func init() {
 	connect(user, pw, dbname, host, db)
 	defer db.Close()
 
+	prepareUserDB(db)
 	prepareEmailCodeDB(db)
 
 }
@@ -59,13 +60,16 @@ func prepareUserDB(db *sql.DB) error {
 		return err
 	}
 	_, err = stmt.Exec()
+	if err == nil {
+		fmt.Println("User DB Success")
+	}
 	return err
 }
 
 func prepareEmailCodeDB(db *sql.DB) error {
 	stmt, err := db.Prepare(`CREATE TABLE IF NOT EXISTS email_codes (
 		code UUID PRIMARY KEY,
-		email character varying(255) NOT NULL,
+		userId UUID NOT NULL,
 		expiration timestamp with time zone NOT NULL
 		)`)
 
@@ -74,5 +78,8 @@ func prepareEmailCodeDB(db *sql.DB) error {
 		return err
 	}
 	_, err = stmt.Exec()
+	if err == nil {
+		fmt.Println("EmailCode DB Success")
+	}
 	return err
 }

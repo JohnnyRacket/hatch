@@ -8,7 +8,7 @@ const NotFound = () => {
                 <div className="column is-half is-offset-one-quarter">
                     <div className="card">
                         <div className="card-content">
-                            <h1 className="title is-2">Here there be dragons 🐉 </h1>
+                            <h1 className="title is-2">Here there be dragons <span role="img" area-label="One dope dragon">🐉</span></h1>
                             <h3 className="subtitle is-4">(Or probably something just as scary)</h3>
                             <p> 
                                 You've wandered off the beaten path and we don't know what you're looking for!

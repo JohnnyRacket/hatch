@@ -9,7 +9,7 @@ class Home extends Component {
                     <div className="column is-half is-offset-one-quarter">
                         <div className="card">
                             <div className="card-content">
-                                <h1 className="title is-2">Welcome to Hatch! 🥚</h1>
+                                <h1 className="title is-2">Welcome to Hatch! <span aria-label="A sweet egg (unhatched)" role="img">🥚</span></h1>
                                 <h3 className="subtitle is-4">How did you get here?</h3>
                             </div>
                             <footer className="card-footer">

@@ -10,8 +10,6 @@ ENV PATH /usr/src/app/node_modules/.bin:$PATH
 
 # install and cache app dependencies
 COPY package.json /usr/src/app/package.json
-RUN npm install -g -s --no-progress yarn
-RUN yarn add create-react-app -g
 RUN yarn
 
 # start app

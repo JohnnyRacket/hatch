@@ -24,3 +24,8 @@ for other users here is the link: https://developers.google.com/protocol-buffers
 
 In the root of the app, add a `secrets` directory with a `postgres_password` document (no extension). Enter the password with no whitespaces around it. 
 
+--
+
+### Notes on the UI-Routing
+
+UI routing is strict - for static files to be accessible from the web, place them in src/assets exclusively.

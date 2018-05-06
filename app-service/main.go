@@ -10,7 +10,6 @@ import (
 	"github.com/gorilla/mux"
 
 	"hatch/app-service/controllers"
-	"hatch/app-service/middleware"
 	"hatch/app-service/session-manager"
 )
 
@@ -25,11 +24,24 @@ func main() {
 	}
 
 	sessionManager := session.NewManager(authKey, cryptKey)
-	middlewareManager := middleware.NewManager(sessionManager)
 	var authenticationController controllers.Controller = controllers.NewAuthenticationController(sessionManager)
 
 	authenticationController.RegisterRoutes(r)
-	r.PathPrefix("/").Handler(middlewareManager.ValidateAuthenticationForHandler(http.StripPrefix("/", http.FileServer(http.Dir("hatch/build")))))
+	// TODO: figure out how to defer 404s here to index.html
+	r.PathPrefix("/static").Handler(http.StripPrefix("/static", http.FileServer(http.Dir("hatch/build/static"))))
+	r.PathPrefix("/assets").Handler(http.StripPrefix("/assets", http.FileServer(http.Dir("hatch/build/assets"))))
+	r.Path("/manifest.json").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "hatch/build/manifest.json")
+	})
+	r.Path("/favicon.ico").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "hatch/build/favicon.ico")
+	})
+	r.PathPrefix("/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "hatch/build/index.html")
+	})
+
+	r.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	})
 
 	log.Println(fmt.Sprintf("App Service listening at port %s", os.Getenv("PUBLIC_PORT")))
 	log.Fatal(http.ListenAndServe(":8080", r))

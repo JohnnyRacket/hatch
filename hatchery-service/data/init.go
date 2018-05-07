@@ -23,23 +23,23 @@ func Init() (*sql.DB, error) {
 	dbname := os.Getenv("PGDBNAME")
 	user := os.Getenv("PGUSER")
 	host := os.Getenv("PGHOST")
-	var db sql.DB
 
-	err = connect(user, pw, dbname, host, &db)
+	db, err := connect(user, pw, dbname, host)
 	if err != nil {
 		return nil, err
 	}
-	err = prepareEggsTable(&db)
+	err = prepareEggsTable(db)
 	if err != nil {
 		return nil, err
 	}
 	fmt.Println("We made the table!")
-	return &db, nil
+	return db, nil
 }
 
-func connect(user, pw, dbname, host string, db *sql.DB) error {
+func connect(user, pw, dbname, host string) (*sql.DB, error) {
 	connStr := "user=" + user + " password=" + pw + " dbname=" + dbname + " host=" + host + " sslmode=disable"
 	var err error
+	var db *sql.DB
 	for i := 0; i < 10; i++ {
 		db, err = sql.Open("postgres", connStr)
 		if err == nil {
@@ -51,9 +51,9 @@ func connect(user, pw, dbname, host string, db *sql.DB) error {
 	//db, err = sql.Open("postgres", connStr)
 	if err != nil {
 		log.Fatal(err)
-		return err
+		return nil, err
 	}
-	return nil
+	return db, nil
 }
 
 func prepareEggsTable(db *sql.DB) error {

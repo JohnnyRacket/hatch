@@ -18,6 +18,9 @@ func main() {
 	router := mux.NewRouter()
 	//init db
 	db, err := data.Init()
+	if err != nil {
+		panic(err)
+	}
 	//initialize repositories
 	eggRepository := data.NewPostgresRepository(db)
 	//have controllers register their routes

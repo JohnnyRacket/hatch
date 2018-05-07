@@ -19,9 +19,9 @@ type PostgresEggRepository struct {
 //TODO: add function to fetch into memory
 
 //NewPostgresRepository returnd a new postgres repository
-func NewPostgresRepository(db *sql.DB) PostgresEggRepository {
+func NewPostgresRepository(db *sql.DB) *PostgresEggRepository {
 	//fetch initial data, start timer for further fetching etc
-	return PostgresEggRepository{db: db}
+	return &PostgresEggRepository{db: db}
 }
 
 //StoreEgg will put an egg into either memory or db storage depending on how far out it should hatch

@@ -37,19 +37,25 @@ func (s *UserServiceServer) GetUser(ctx context.Context, userId *pb.UserId) (*pb
 }
 
 //RegisterUser puts a user into the system and will go to create an email code
-func (s *UserServiceServer) RegisterUser(ctx context.Context, user *pb.NewUser) (status *pb.Status, err error) {
+func (s *UserServiceServer) RegisterUser(ctx context.Context, user *pb.NewUser) (*pb.Status, error) {
 	if user.Email == "" || user.Name == "" {
 		return nil, twirp.InvalidArgumentError("", "Email and User must be valid")
 	}
 
-	return &pb.Status{Status: "success"}, nil
+	if !s.checkUserExists(user.Email) {
+		id, err := s.userRepo.AddUser(user.Email, user.Name)
+		if err != nil {
+			return nil, err
+		}
+		s.emailCodeRepo.AddEmailCode(id, uuid.New())
+
+		return &pb.Status{Status: "success"}, nil
+	} else {
+		return &pb.Status{Status: "already exists"}, nil
+	}
+
 }
 
-func (s *UserServiceServer) createMagicEmailCode(email string) (code string) {
-	uuid := uuid.New()
-	return uuid.String()
-}
-
-func (s *UserServiceServer) checkUserExists(email string) (res bool, err error) {
-	return false, nil
+func (s *UserServiceServer) checkUserExists(email string) bool {
+	return false
 }

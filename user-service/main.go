@@ -6,6 +6,8 @@ import (
 	"hatch/rpc/user"
 	"hatch/user-service/controllers"
 	"hatch/user-service/data"
+
+	"github.com/gorilla/mux"
 )
 
 func main() {
@@ -23,6 +25,11 @@ func main() {
 	userController := controllers.NewUserServiceServer(userRepo, emailcodeRepo)
 	//server := &controllers.Server{} // implements Haberdasher interface
 	twirpHandler := user.NewUserServiceServer(userController, nil)
+	//mux := http.NewServeMux()
+	router := mux.NewRouter()
+
+	//should allow people to hit the twrip rpc
+	router.Handle(user.UserServicePathPrefix, twirpHandler)
 
 	http.ListenAndServe(":8080", twirpHandler)
 }

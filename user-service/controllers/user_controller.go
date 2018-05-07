@@ -4,8 +4,6 @@ import (
 	"context"
 	pb "hatch/rpc/user"
 	"hatch/user-service/data"
-	"math/rand"
-	"strconv"
 
 	"github.com/google/uuid"
 
@@ -24,15 +22,17 @@ func NewUserServiceServer(userRepo data.UserRepository, emailCodeRepo data.Email
 }
 
 //GetUser gets you a user by id
-func (s *UserServiceServer) GetUser(ctx context.Context, userId *pb.UserId) (user *pb.User, err error) {
-	if userId.Id <= 0 {
-		return nil, twirp.InvalidArgumentError(strconv.Itoa(int(userId.Id)), "ID out of range")
+func (s *UserServiceServer) GetUser(ctx context.Context, userId *pb.UserId) (*pb.User, error) {
+	id, err := uuid.Parse(userId.Id)
+	if err != nil {
+		return nil, err
 	}
-
+	user, err := s.userRepo.GetUser(id)
+	//TODO get does not exist error
 	return &pb.User{
 		Id:    userId.Id,
-		Email: []string{"white", "black", "brown", "red", "blue"}[rand.Intn(4)],
-		Name:  []string{"bowler", "baseball cap", "top hat", "derby"}[rand.Intn(3)],
+		Email: user.Email,
+		Name:  user.Name,
 	}, nil
 }
 

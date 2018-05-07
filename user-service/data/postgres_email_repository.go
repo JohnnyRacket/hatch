@@ -8,6 +8,8 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	// fallback for the sql package
+	_ "github.com/lib/pq"
 )
 
 //PostgresEmailRepository opens up acces to email codes

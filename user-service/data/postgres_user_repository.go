@@ -7,6 +7,8 @@ import (
 	"log"
 
 	"github.com/google/uuid"
+	// fallback for the sql package
+	_ "github.com/lib/pq"
 )
 
 //PostgresUserRepository opens up acces to email codes

@@ -12,15 +12,18 @@ import (
 	"github.com/twitchtv/twirp"
 )
 
+//UserServiceServer implements the twirp user service server
 type UserServiceServer struct {
 	userRepo      data.UserRepository
 	emailCodeRepo data.EmailRepository
 }
 
-func NewUserServiceServer(userRepo data.UserRepository, emailCodeRepo data.EmailRepository) UserServiceServer {
-	return UserServiceServer{userRepo: userRepo, emailCodeRepo: emailCodeRepo}
+//NewUserServiceServer vends you a new user service server for twrip
+func NewUserServiceServer(userRepo data.UserRepository, emailCodeRepo data.EmailRepository) *UserServiceServer {
+	return &UserServiceServer{userRepo: userRepo, emailCodeRepo: emailCodeRepo}
 }
 
+//GetUser gets you a user by id
 func (s *UserServiceServer) GetUser(ctx context.Context, userId *pb.UserId) (user *pb.User, err error) {
 	if userId.Id <= 0 {
 		return nil, twirp.InvalidArgumentError(strconv.Itoa(int(userId.Id)), "ID out of range")
@@ -33,7 +36,7 @@ func (s *UserServiceServer) GetUser(ctx context.Context, userId *pb.UserId) (use
 	}, nil
 }
 
-//Register user puts a user into the system and will go to create an email code
+//RegisterUser puts a user into the system and will go to create an email code
 func (s *UserServiceServer) RegisterUser(ctx context.Context, user *pb.NewUser) (status *pb.Status, err error) {
 	if user.Email == "" || user.Name == "" {
 		return nil, twirp.InvalidArgumentError("", "Email and User must be valid")

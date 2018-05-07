@@ -17,10 +17,9 @@ type PostgresUserRepository struct {
 //TODO: remove codes past thier time limit
 
 //NewPostgresUserRepository vends a new repo taking in a db
-func NewPostgresUserRepository(db *sql.DB) PostgresUserRepository {
+func NewPostgresUserRepository(db *sql.DB) *PostgresUserRepository {
 	//fetch initial data, start timer for further fetching etc
-	r := PostgresUserRepository{db: db}
-	return r
+	return &PostgresUserRepository{db: db}
 }
 
 //GetUser gets an email code if it exists & is in expiration time, else throws an error

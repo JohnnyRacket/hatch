@@ -18,10 +18,9 @@ type PostgresEmailRepository struct {
 //TODO: remove codes past thier time limit
 
 //NewPostgresEmailRepository vends a new repo taking in a db
-func NewPostgresEmailRepository(db *sql.DB) PostgresEmailRepository {
+func NewPostgresEmailRepository(db *sql.DB) *PostgresEmailRepository {
 	//fetch initial data, start timer for further fetching etc
-	r := PostgresEmailRepository{db: db}
-	return r
+	return &PostgresEmailRepository{db: db}
 }
 
 //GetEmailCode gets an email code if it exists & is in expiration time, else throws an error

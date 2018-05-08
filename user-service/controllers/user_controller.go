@@ -2,8 +2,10 @@ package controllers
 
 import (
 	"context"
+	"errors"
 	pb "hatch/rpc/user"
 	"hatch/user-service/data"
+	"hatch/user-service/models"
 
 	"github.com/google/uuid"
 
@@ -40,6 +42,11 @@ func (s *UserServiceServer) GetUser(ctx context.Context, userId *pb.UserId) (*pb
 func (s *UserServiceServer) RegisterUser(ctx context.Context, user *pb.NewUser) (*pb.Status, error) {
 	if user.Email == "" || user.Name == "" {
 		return nil, twirp.InvalidArgumentError("", "Email and User must be valid")
+	}
+
+	model := models.User{Name: user.Name, Email: user.Email}
+	if !model.Validate() {
+		return nil, errors.New("Malformed User")
 	}
 
 	if !s.checkUserExists(user.Email) {

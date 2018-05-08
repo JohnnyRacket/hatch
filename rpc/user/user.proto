@@ -7,16 +7,30 @@ option go_package = "user";
 service UserService {
     // GetUser returns a single user via its id
     rpc GetUser(UserId) returns (User);
+
+    rpc RegisterUser(NewUser) returns (Status);
 }
 
 // User is a user of hatch
 message User {
-    int32 id = 1; // must be > 0
+    string id = 1; // must be > 0
     string email = 2;
     string name = 3;
 }
 
+// User is a user of hatch
+message NewUser {
+    string email = 1;
+    string name = 2;
+}
+
 // UserId is the Id by which users are stored
 message UserId {
-    int32 id = 1;
+    string id = 1;
+}
+
+// Status returns either 'success' or 'error'
+message Status{
+    int32 code = 1;
+    string message = 2;
 }

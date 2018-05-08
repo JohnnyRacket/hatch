@@ -16,14 +16,19 @@ func main() {
 
 	//creates a new router
 	router := mux.NewRouter()
+	//init db
+	db, err := data.Init()
+	if err != nil {
+		panic(err)
+	}
 	//initialize repositories
-	eggRepository := data.NewPostgresRepository()
+	eggRepository := data.NewPostgresRepository(db)
 	//have controllers register their routes
-	eggController := controllers.NewEggController(&eggRepository)
+	eggController := controllers.NewEggController(eggRepository)
 	eggController.RegisterRoutes(router)
 
 	//starts the function that will evaluate when to alert users
-	engine.NewIncubator(&eggRepository)
+	engine.NewIncubator(eggRepository)
 
 	fmt.Println("hi there from hatchery service")
 

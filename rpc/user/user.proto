@@ -31,5 +31,6 @@ message UserId {
 
 // Status returns either 'success' or 'error'
 message Status{
-    string status = 1;
+    int32 code = 1;
+    string message = 2;
 }

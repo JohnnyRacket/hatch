@@ -56,9 +56,9 @@ func (s *UserServiceServer) RegisterUser(ctx context.Context, user *pb.NewUser) 
 		}
 		s.emailCodeRepo.AddEmailCode(id, uuid.New())
 
-		return &pb.Status{Status: "success"}, nil
+		return &pb.Status{Code: 200, Message: "Success"}, nil
 	} else {
-		return &pb.Status{Status: "already exists"}, nil
+		return &pb.Status{Code: 303, Message: "User Already Exists"}, nil
 	}
 
 }

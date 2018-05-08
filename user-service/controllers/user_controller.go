@@ -6,6 +6,7 @@ import (
 	pb "hatch/rpc/user"
 	"hatch/user-service/data"
 	"hatch/user-service/models"
+	"log"
 
 	"github.com/google/uuid"
 
@@ -64,5 +65,10 @@ func (s *UserServiceServer) RegisterUser(ctx context.Context, user *pb.NewUser) 
 }
 
 func (s *UserServiceServer) checkUserExists(email string) bool {
-	return false
+	res, err := s.userRepo.CheckUserExists(email)
+	if err != nil {
+		log.Fatal(err)
+		return true
+	}
+	return res
 }

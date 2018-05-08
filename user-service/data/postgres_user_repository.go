@@ -68,6 +68,23 @@ func (r *PostgresUserRepository) GetUsers() ([]models.User, error) {
 	return users, nil
 }
 
+//CheckUserExists checks if an email is already registered in the db
+func (r *PostgresUserRepository) CheckUserExists(email string) (bool, error) {
+	user := new(models.User)
+
+	row := r.db.QueryRow("SELECT * FROM user WHERE email=?", email)
+	err := row.Scan(&user.Id, &user.Email, &user.Name, &user.NotificationEndpoint)
+
+	switch {
+	case err == sql.ErrNoRows:
+		return false, err
+	case err != nil:
+		log.Fatal(err)
+		return true, err
+	}
+	return true, nil
+}
+
 //AddUser adds and email and code pair to repo with a set time limit, else throws an error
 func (r *PostgresUserRepository) AddUser(email string, name string) (uuid.UUID, error) {
 	uuid := uuid.New()

@@ -26,7 +26,7 @@ func NewPostgresEmailRepository(db *sql.DB) *PostgresEmailRepository {
 }
 
 //GetEmailCode gets an email code if it exists & is in expiration time, else throws an error
-func (r *PostgresEmailRepository) GetEmailCode(code uuid.UUID) error {
+func (r *PostgresEmailRepository) GetEmailCode(code uuid.UUID) (models.EmailCode, error) {
 	var emailCode models.EmailCode
 
 	row := r.db.QueryRow("SELECT * FROM email_codes WHERE code = ?", code)
@@ -34,17 +34,17 @@ func (r *PostgresEmailRepository) GetEmailCode(code uuid.UUID) error {
 
 	switch {
 	case err == sql.ErrNoRows:
-		return err
+		return emailCode, err
 	case err != nil:
 		log.Fatal(err)
-		return err
+		return emailCode, err
 	}
 
 	if time.Now().After(emailCode.Expiration) {
 		err = errors.New("Code is Expired")
 	}
 
-	return err
+	return emailCode, err
 }
 
 //AddEmailCode adds and email and code pair to repo with a set time limit, else throws an error

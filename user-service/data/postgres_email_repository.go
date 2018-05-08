@@ -29,7 +29,7 @@ func NewPostgresEmailRepository(db *sql.DB) *PostgresEmailRepository {
 func (r *PostgresEmailRepository) GetEmailCode(code uuid.UUID) error {
 	var emailCode models.EmailCode
 
-	row := r.db.QueryRow("SELECT * FROM email_codes WHERE code=?", code)
+	row := r.db.QueryRow("SELECT * FROM email_codes WHERE code = ?", code)
 	err := row.Scan(&emailCode.Code, &emailCode.UserId, &emailCode.Expiration)
 
 	switch {

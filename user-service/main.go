@@ -31,5 +31,5 @@ func main() {
 	//should allow people to hit the twrip rpc
 	router.Handle(user.UserServicePathPrefix, twirpHandler)
 
-	http.ListenAndServe(":8080", twirpHandler)
+	http.ListenAndServe(":8080", router)
 }

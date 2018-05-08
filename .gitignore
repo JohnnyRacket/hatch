@@ -17,7 +17,3 @@
 #Ignore secrets
 secrets/
 
-<<<<<<< HEAD
-=======
-hatch-react-app/build
->>>>>>> gitignore update

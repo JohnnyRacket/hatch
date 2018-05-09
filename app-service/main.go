@@ -37,11 +37,11 @@ func main() {
 	r.Path("/favicon.ico").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "hatch/build/favicon.ico")
 	})
+	r.Path("/service-worker.js").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "hatch/build/service-worker.js")
+	})
 	r.PathPrefix("/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "hatch/build/index.html")
-	})
-
-	r.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	})
 
 	log.Println(fmt.Sprintf("App Service listening at port %s", os.Getenv("PUBLIC_PORT")))

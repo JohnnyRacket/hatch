@@ -24,7 +24,6 @@ func NewAuthenticationController(sessionManager *session.Manager) *Authenticatio
 // RegisterRoutes registers the routes for the controller
 func (a *AuthenticationController) RegisterRoutes(r *mux.Router) {
 	r.HandleFunc("/logout", a.logout).Methods("GET")
-	r.HandleFunc("/login", a.renderlogin).Methods("GET")
 	r.HandleFunc("/login", a.initiatelogin).Methods("POST")
 	r.HandleFunc("/authenticate", a.authenticate).Methods("GET").Queries("code", "{code}")
 	r.HandleFunc("/secretroute", a.middleware.ValidateAuthentication(a.secretroute)).Methods("GET")
@@ -38,15 +37,6 @@ func (a *AuthenticationController) secretroute(w http.ResponseWriter, r *http.Re
 	}
 
 	fmt.Fprintln(w, fmt.Sprintf("your super secret secret is %s", session.Values[a.sessionManager.UserKey]))
-}
-
-func (a *AuthenticationController) renderlogin(w http.ResponseWriter, r *http.Request) {
-	success := handleLogout(a, w, r)
-	if !success {
-		fmt.Printf("error logging out")
-	}
-
-	fmt.Fprintln(w, "Log in page goes here")
 }
 
 func (a *AuthenticationController) initiatelogin(w http.ResponseWriter, r *http.Request) {

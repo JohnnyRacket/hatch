@@ -1,0 +1,11 @@
+.home .header-card .card-content {
+    padding: 2.5em 3.5em;
+}
+
+.home .header-card .card-footer {
+    padding: .75em;
+}
+
+.home .header-card .card-footer a {
+    margin-left: .5em;
+}

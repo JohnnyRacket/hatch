@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Link, Route } from 'react-router-dom'
-import asyncComponent from '../generic/Async.component';
+import asyncComponent from '../generic/async.component';
 import './home.css';
 
 const AsyncLogin = asyncComponent(() => import("./login/login.component"))
@@ -21,7 +21,7 @@ class Home extends Component {
                             </div>
                             <footer className="card-footer">
                                 {
-                                     this.props.location.pathname == "/login" ?
+                                     this.props.location.pathname === "/login" ?
                                         <p className="card-footer-item is-centered">
                                             Not in our crew? <Link to="/register">Sign up</Link>
                                         </p>

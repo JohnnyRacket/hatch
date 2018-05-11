@@ -29,3 +29,7 @@ In the root of the app, add a `secrets` directory with a `postgres_password` doc
 ### Notes on the UI-Routing
 
 UI routing is strict - for static files to be accessible from the web, place them in src/assets exclusively.
+
+### Notes on handling updates to package.json
+
+Volumes are cached and kept around even after docker containers are killed. To update the dependencies of the react app, update package.json appropriately, and run docker volumes rm hatch_node_modules before running docker-compose up --build.

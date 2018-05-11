@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import './App.css';
 
-import asyncComponent from './generic/Async.component';
+import asyncComponent from './generic/async.component';
 
 const AsyncHome = asyncComponent(() => import("./home/home.component"))
 const AsyncHomeExample = asyncComponent(() => import("./home/example-home.component"))
-const AsyncNotFound = asyncComponent(() => import("./generic/NotFound.component"));
+const AsyncNotFound = asyncComponent(() => import("./generic/not-found.component"));
 
 class App extends Component {
   render() {

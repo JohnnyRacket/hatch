@@ -1,10 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { createStore, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
+import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import './assets/vendor/css/bulma.css';
 import './index.css';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
-
+console.log(createStore, applyMiddleware);
 ReactDOM.render(<BrowserRouter><App /></BrowserRouter>, document.getElementById('root'));
 registerServiceWorker();

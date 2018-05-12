@@ -8,19 +8,19 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	// fallback for the sql package
+	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
 
 //PostgresEmailRepository opens up acces to email codes
 type PostgresEmailRepository struct {
-	db *sql.DB
+	db *sqlx.DB
 }
 
 //TODO: remove codes past thier time limit
 
 //NewPostgresEmailRepository vends a new repo taking in a db
-func NewPostgresEmailRepository(db *sql.DB) *PostgresEmailRepository {
+func NewPostgresEmailRepository(db *sqlx.DB) *PostgresEmailRepository {
 	//fetch initial data, start timer for further fetching etc
 	return &PostgresEmailRepository{db: db}
 }
@@ -29,8 +29,7 @@ func NewPostgresEmailRepository(db *sql.DB) *PostgresEmailRepository {
 func (r *PostgresEmailRepository) GetEmailCode(code uuid.UUID) (models.EmailCode, error) {
 	var emailCode models.EmailCode
 
-	row := r.db.QueryRow("SELECT * FROM email_codes WHERE code = ?", code)
-	err := row.Scan(&emailCode.Code, &emailCode.UserId, &emailCode.Expiration)
+	err := r.db.Get(emailCode, "SELECT * FROM email_codes WHERE code = ?", code)
 
 	switch {
 	case err == sql.ErrNoRows:

@@ -1,18 +1,18 @@
 package data
 
 import (
-	"database/sql"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
 	"time"
-	// fallback for the sql package
+
+	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
 
 //Init creates the db context and returns it, also ensures tables are set up
-func Init() (*sql.DB, error) {
+func Init() (*sqlx.DB, error) {
 	dat, err := ioutil.ReadFile(os.Getenv("PGPW_LOCATION"))
 	if err != nil {
 		fmt.Println(err)
@@ -32,12 +32,12 @@ func Init() (*sql.DB, error) {
 
 }
 
-func connect(user, pw, dbname, host string) *sql.DB {
+func connect(user, pw, dbname, host string) *sqlx.DB {
 	connStr := "user=" + user + " password=" + pw + " dbname=" + dbname + " host=" + host + " sslmode=disable"
 	var err error
-	var db *sql.DB
+	var db *sqlx.DB
 	for i := 0; i < 10; i++ {
-		db, err = sql.Open("postgres", connStr)
+		db, err = sqlx.Connect("postgres", connStr)
 		if err == nil {
 			break
 		}
@@ -51,12 +51,12 @@ func connect(user, pw, dbname, host string) *sql.DB {
 	return db
 }
 
-func prepareUserDB(db *sql.DB) error {
+func prepareUserDB(db *sqlx.DB) error {
 	stmt, err := db.Prepare(`CREATE TABLE IF NOT EXISTS users (
 		id UUID PRIMARY KEY,
 		email character varying(255) NOT NULL,
 		name character varying(255) NOT NULL,
-		notifcationEndpoint character varying(255) NOT NULL,
+		notifcationEndpoint jsonb NOT NULL,
 		expiration timestamp with time zone NOT NULL
 		)`)
 
@@ -71,7 +71,7 @@ func prepareUserDB(db *sql.DB) error {
 	return err
 }
 
-func prepareEmailCodeDB(db *sql.DB) error {
+func prepareEmailCodeDB(db *sqlx.DB) error {
 	stmt, err := db.Prepare(`CREATE TABLE IF NOT EXISTS email_codes (
 		code UUID PRIMARY KEY,
 		userId UUID REFERENCES users NOT NULL,

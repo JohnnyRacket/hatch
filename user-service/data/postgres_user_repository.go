@@ -7,19 +7,20 @@ import (
 	"log"
 
 	"github.com/google/uuid"
+	"github.com/jmoiron/sqlx"
 	// fallback for the sql package
 	_ "github.com/lib/pq"
 )
 
 //PostgresUserRepository opens up acces to email codes
 type PostgresUserRepository struct {
-	db *sql.DB
+	db *sqlx.DB
 }
 
 //TODO: remove codes past thier time limit
 
 //NewPostgresUserRepository vends a new repo taking in a db
-func NewPostgresUserRepository(db *sql.DB) *PostgresUserRepository {
+func NewPostgresUserRepository(db *sqlx.DB) *PostgresUserRepository {
 	//fetch initial data, start timer for further fetching etc
 	return &PostgresUserRepository{db: db}
 }
@@ -28,8 +29,8 @@ func NewPostgresUserRepository(db *sql.DB) *PostgresUserRepository {
 func (r *PostgresUserRepository) GetUser(id uuid.UUID) (models.User, error) {
 	user := new(models.User)
 
-	row := r.db.QueryRow("SELECT * FROM user WHERE id=?", id)
-	err := row.Scan(&user.Id, &user.Email, &user.Name, &user.NotificationEndpoint)
+	err := r.db.Get(&user, "SELECT * FROM user WHERE id=$1", id)
+	//err := row.Scan(&user.Id, &user.Email, &user.Name, &user.NotificationDetails)
 
 	switch {
 	case err == sql.ErrNoRows:
@@ -50,19 +51,10 @@ func (r *PostgresUserRepository) GetUser(id uuid.UUID) (models.User, error) {
 func (r *PostgresUserRepository) GetUsers() ([]models.User, error) {
 
 	users := make([]models.User, 0)
-	rows, err := r.db.Query("SELECT * FROM user")
+	err := r.db.Get(users, "SELECT * FROM user")
 	//if there are no users
-	if err == sql.ErrNoRows {
-		return nil, nil
-	}
-
-	for rows.Next() {
-		user := new(models.User)
-		err := rows.Scan(&user.Id, &user.Email, &user.Name, &user.NotificationEndpoint)
-		if err != nil {
-			log.Fatal(err)
-		}
-		users = append(users, *user)
+	if err != nil && err != sql.ErrNoRows {
+		return nil, err
 	}
 
 	return users, nil
@@ -72,8 +64,7 @@ func (r *PostgresUserRepository) GetUsers() ([]models.User, error) {
 func (r *PostgresUserRepository) CheckUserExists(email string) (bool, error) {
 	user := new(models.User)
 
-	row := r.db.QueryRow("SELECT * FROM user WHERE email=?", email)
-	err := row.Scan(&user.Id, &user.Email, &user.Name, &user.NotificationEndpoint)
+	err := r.db.Get(user, "SELECT * FROM user WHERE email=?", email)
 
 	switch {
 	case err == sql.ErrNoRows:

@@ -4,6 +4,7 @@ import (
 	"regexp"
 
 	"github.com/google/uuid"
+	"github.com/jmoiron/sqlx/types"
 )
 
 var rxEmail = regexp.MustCompile("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$")
@@ -11,10 +12,10 @@ var rxName = regexp.MustCompile("^[a-zA-Z][\\w|-]{0,17}$")
 
 //User represents a user in our system
 type User struct {
-	Id                   uuid.UUID
-	Name                 string
-	Email                string
-	NotificationEndpoint string
+	Id                  uuid.UUID
+	Name                string
+	Email               string
+	NotificationDetails types.JSONText
 }
 
 //ValidateUser validates that the user struct is not malformed

@@ -64,7 +64,7 @@ func (r *PostgresUserRepository) GetUsers() ([]models.User, error) {
 func (r *PostgresUserRepository) CheckUserExists(email string) (bool, error) {
 	user := new(models.User)
 
-	err := r.db.Get(user, "SELECT * FROM user WHERE email=?", email)
+	err := r.db.Get(user, "SELECT * FROM user WHERE email = $1", email)
 
 	switch {
 	case err == sql.ErrNoRows:
@@ -90,7 +90,7 @@ func (r *PostgresUserRepository) AddUser(email string, name string) (uuid.UUID, 
 
 //RemoveEmailCode removes an email code entry, else throws an err
 func (r *PostgresUserRepository) RemoveUser(id uuid.UUID) error {
-	_, err := r.db.Exec("DELETE FROM users where id = ?", id)
+	_, err := r.db.Exec("DELETE FROM users where id = $1", id)
 	if err == sql.ErrNoRows {
 		return nil
 	}

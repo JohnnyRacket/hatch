@@ -59,7 +59,7 @@ func (r *PostgresEmailRepository) AddEmailCode(userId uuid.UUID, code uuid.UUID)
 
 //RemoveEmailCode removes an email code entry, else throws an err
 func (r *PostgresEmailRepository) RemoveEmailCode(code uuid.UUID) error {
-	_, err := r.db.Exec("DELETE FROM email_codes where code = ?", code)
+	_, err := r.db.Exec("DELETE FROM email_codes where code = $1", code)
 	if err == sql.ErrNoRows {
 		return nil
 	}

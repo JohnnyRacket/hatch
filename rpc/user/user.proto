@@ -7,7 +7,7 @@ option go_package = "user";
 service UserService {
     // GetUser returns a single user via its id
     rpc GetUser(UserId) returns (User);
-
+    rpc DeleteUser(UserId) returns (Status);
     rpc RegisterUser(NewUser) returns (Status);
 }
 

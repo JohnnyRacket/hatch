@@ -63,6 +63,19 @@ func (s *UserServiceServer) RegisterUser(ctx context.Context, user *pb.NewUser) 
 	}
 
 }
+func (s *UserServiceServer) DeleteUser(ctx context.Context, userId *pb.UserId) (*pb.Status, error) {
+	id, err := uuid.Parse(userId.Id)
+	if err != nil {
+		return nil, err
+	}
+	err = s.userRepo.RemoveUser(id)
+
+	if err != nil {
+		return &pb.Status{Code: 500, Message: "Server Error Deleting User."}, nil
+	} else {
+		return &pb.Status{Code: 200, Message: "User Deleted."}, nil
+	}
+}
 
 func (s *UserServiceServer) checkUserExists(email string) bool {
 	res, err := s.userRepo.CheckUserExists(email)

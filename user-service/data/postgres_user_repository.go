@@ -76,7 +76,7 @@ func (r *PostgresUserRepository) CheckUserExists(email string) (bool, error) {
 	return true, nil
 }
 
-//AddUser adds and email and code pair to repo with a set time limit, else throws an error
+//AddUser creates the user in the db, else throws an error
 func (r *PostgresUserRepository) AddUser(email string, name string) (uuid.UUID, error) {
 	uuid := uuid.New()
 	_, err := r.db.Exec("INSERT INTO users (id , email, name, notificationEndpoint) VALUES ($1, $2, $3, $4);",

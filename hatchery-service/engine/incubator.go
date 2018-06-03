@@ -2,45 +2,49 @@ package engine
 
 import (
 	"fmt"
-	"hatchery/data"
-	"hatchery/models"
+	"hatch/hatchery-service/data"
+	"hatch/hatchery-service/models"
 	"time"
 )
 
 //Incubator is the engine that drives egg hatching, its proprty is the ticker that drives it
 type Incubator struct {
-	Ticker *time.Ticker
+	Ticker     *time.Ticker
+	repository data.EggRepository
 }
 
 //NewIncubator creates and Incubaotr object and returns it
-func NewIncubator() Incubator {
+func NewIncubator(repo data.EggRepository) Incubator {
 	ticker := time.NewTicker(time.Second)
+	incubator := Incubator{
+		Ticker:     ticker,
+		repository: repo,
+	}
 	defer func() {
-		go tick(*ticker)
+		go incubator.tick(*ticker)
 	}()
-	incubator := Incubator{Ticker: ticker}
 	return incubator
 }
 
-func tick(ticker time.Ticker) {
+func (i Incubator) tick(ticker time.Ticker) {
 	for range ticker.C {
-		go Incubate()
+		go i.incubate()
 	}
 }
 
 //Incubate serves to incubate eggs and put them into the work stream when they are due to hatch
-func Incubate() {
+func (i Incubator) incubate() {
 	//fmt.Println("incubating ")
 	now := time.Now().UTC()
 	removed := 0
 
 	defer func() {
-		data.RemoveEggs(removed)
+		i.repository.RemoveEggs(removed)
 	}()
 
-	for _, egg := range data.RetrieveEggs() {
+	for _, egg := range i.repository.RetrieveEggs() {
 		if egg.HatchTime.Before(now) {
-			go NotifyUser(egg)
+			go i.NotifyUser(egg)
 			removed++
 		} else {
 			return
@@ -50,6 +54,6 @@ func Incubate() {
 }
 
 //NotifyUser will alert eh user of their egg hatching and is called then it is time.
-func NotifyUser(egg models.Egg) {
+func (i Incubator) NotifyUser(egg models.Egg) {
 	fmt.Println("egg hatching ", egg)
 }

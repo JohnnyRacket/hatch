@@ -11,4 +11,9 @@
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
+#Ignore retool tools
+/_tools
+
+#Ignore secrets
 secrets/
+

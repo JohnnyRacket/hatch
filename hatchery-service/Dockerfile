@@ -1,6 +1,6 @@
 FROM golang:latest
-ADD . /go/src/hatchery
-WORKDIR /go/src/hatchery
+ADD . /go/src/hatch/hatchery-service
+WORKDIR /go/src/hatch/hatchery-service
 RUN go get 
 RUN go build
-ENTRYPOINT [ "./hatchery" ]
+ENTRYPOINT [ "./hatchery-service" ]

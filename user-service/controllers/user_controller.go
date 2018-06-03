@@ -7,6 +7,7 @@ import (
 	"hatch/user-service/data"
 	"hatch/user-service/models"
 	"log"
+	"time"
 
 	"github.com/google/uuid"
 
@@ -63,6 +64,23 @@ func (s *UserServiceServer) RegisterUser(ctx context.Context, user *pb.NewUser) 
 	}
 
 }
+
+//ValidateUser validates a users email code and returns the access & refresh tokens
+func (s *UserServiceServer) ValidateUser(ctx context.Context, guid *pb.Guid) (*pb.UserToken, error) {
+	id, err := uuid.Parse(guid.Value)
+	if err != nil {
+		return nil, err
+	}
+	emailCode, err := s.emailCodeRepo.GetEmailCode(id)
+	if emailCode.Expiration.Before(time.Now()) {
+		//TODO create access and fresh tokens and insert them
+		return nil, nil
+	} else {
+		return nil, errors.New("Email Code is Expired")
+	}
+}
+
+//DeleteUser removes a user from the system using the Id
 func (s *UserServiceServer) DeleteUser(ctx context.Context, userId *pb.UserId) (*pb.Status, error) {
 	id, err := uuid.Parse(userId.Id)
 	if err != nil {

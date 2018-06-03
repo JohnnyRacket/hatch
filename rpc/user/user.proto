@@ -9,6 +9,7 @@ service UserService {
     rpc GetUser(UserId) returns (User);
     rpc DeleteUser(UserId) returns (Status);
     rpc RegisterUser(NewUser) returns (Status);
+    rpc ValidateUser(Guid) returns (UserToken);
 }
 
 // User is a user of hatch
@@ -18,10 +19,21 @@ message User {
     string name = 3;
 }
 
+//UserToken are returned when a user validates, they have the user id as well as the access token required for that user
+message UserToken{
+    string userId = 1;
+    string userRefreshToken = 2;
+    string userAccessToken = 3;
+}
+
 // User is a user of hatch
 message NewUser {
     string email = 1;
     string name = 2;
+}
+//Guid is a guid (globablly unique identifier)
+message Guid {
+    string value = 1;
 }
 
 // UserId is the Id by which users are stored
